@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-$filename=shift;
+$filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir]\n");
 $target=shift || '.';
 
 open(INP,"<$filename") or die("Can't open file $filename\n");
