@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+$filename=shift;
+$target=shift || '.';
+
+open(INP,"<$filename") or die("Can't open file $filename\n");
+
+# Get header
+$header='';
+while(<INP>)
+{
+    if(/^-- Table/)
+    {
+        last;
+    }
+    $header.=$_;
+}
+
+# $_ contains the start of a new table
+do
+{
+    ($tablename)=/Table structure for table `(.*?)`/;
+
+    print "$tablename\n";
+    open (OP,">$target/$tablename.sql") or die("Can't open output file $tablename.sql");
+
+    print OP $header;
+
+    print OP $_;
+
+    while(<INP>)
+    {
+        if(/^-- Table/)
+        {
+            last;
+        }
+        print OP $_;
+    }
+
+    close OP;
+
+    if(eof)
+    {
+        close INP;
+        print "Done\n";
+        exit;
+    }
+
+}while(true);
