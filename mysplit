@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 $filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir]\n");
 $target=shift || '.';
@@ -46,4 +46,4 @@ do
         exit;
     }
 
-}while(true);
+}while(1);
