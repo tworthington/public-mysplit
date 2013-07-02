@@ -1,7 +1,10 @@
 #!/usr/bin/perl -w
 
-$filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir]\n");
+$filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir [pattern]]\nPattern defaults to '-- Table' but note that it is a regular\n expression so characters like /, ?, * etc.\n need to be escaped if used literally");
 $target=shift || '.';
+$pat=shift || '-- Table';
+
+$pat=qr/$pat/;
 
 open(INP,"<$filename") or die("Can't open file $filename\n");
 
@@ -9,7 +12,7 @@ open(INP,"<$filename") or die("Can't open file $filename\n");
 $header='';
 while(<INP>)
 {
-    if(/^-- Table/)
+    if(/^$pat/)
     {
         last;
     }
@@ -30,7 +33,7 @@ do
 
     while(<INP>)
     {
-        if(/^-- Table/)
+        if(/^$pat/)
         {
             last;
         }
