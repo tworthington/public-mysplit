@@ -1,0 +1,35 @@
+public-mysplit
+==============
+
+Self-contained Perl script to split MySQLdump files into individual table dump files, perserving the header from the original file.
+
+* Simple usage
+
+=./mysplit moodle.sql=
+
+Just splits =moodle.sql= into separate table files with each file named after the table plus the suffix '.sql'. The files will be put in the current directory.
+
+* Different directory
+
+=./mysplit moodle.sql /tmp/=
+
+As above but the files are created in the given directory instead of the current working directory.
+
+* Different table marker
+=./mysplit moodle.sql /tmp/ '--- Table'=
+
+As above but splits tables based on the text ='--- Table'= instead of ='-- Table'=, which is currently the norm. This text must appear at the start of a line within the dump file.
+* Specific table(s)
+=./mysplit moodle.sql /tmp/ '-- Table' 'mdl_role'=
+
+This only saves tables which contain the given text in their names. This may be more than one, so you may want to be as specific as possible and/or use a backtick to delineate the name. So
+
+=./mysplit moodle.sql /tmp/ '-- Table' '`mdl_role`'=
+
+will prevent splitting out a table called, for example, =mdl_role_assignments=.
+
+*However* be sure not to use backticks within double quotes or Bash may become unhappy and do things that you don't expect. So never do:
+
+=./mysplit moodle.sql /tmp/ '-- Table' "`mdl_role`"=
+
+just in case
