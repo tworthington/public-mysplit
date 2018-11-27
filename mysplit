@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
-$filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir [pattern]]\nPattern defaults to '-- Table' but note that it is a regular\n expression so characters like /, ?, * etc.\n need to be escaped if used literally");
+$filename=shift || die("Usage: $0 <mysqldumpFile> [targetDir [pattern [table]]]\nPattern defaults to '-- Table' but note that it is a regular\n expression so characters like /, ?, * etc.\n need to be escaped if used literally");
 $target=shift || '.';
 $pat=shift || '-- Table';
+$tab=shift || '.';
 
 $pat=qr/$pat/;
 
@@ -25,11 +26,15 @@ do
     ($tablename)=/Table structure for table `(.*?)`/;
 
     print "$tablename\n";
-    open (OP,">$target/$tablename.sql") or die("Can't open output file $tablename.sql");
+    $matched=$tablename=~/$tab/;
+    if($matched)
+    {
+        open (OP,">$target/$tablename.sql") or die("Can't open output file $tablename.sql");
 
-    print OP $header;
+        print OP $header;
 
-    print OP $_;
+        print OP $_;
+    }
 
     while(<INP>)
     {
@@ -37,10 +42,10 @@ do
         {
             last;
         }
-        print OP $_;
+        print OP $_ if $matched;
     }
 
-    close OP;
+    close OP if $matched;
 
     if(eof)
     {
